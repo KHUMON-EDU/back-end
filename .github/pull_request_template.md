@@ -1,6 +1,6 @@
 ## 관련 이슈
 <!-- close #이슈번호 -->
-close
+close #
 
 ## 예상 리뷰 시간
 n-min
