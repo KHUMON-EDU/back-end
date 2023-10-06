@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+
+  servlet:
+    multipart:
+      max-file-size: 400MB
+      max-request-size: 500MB
+
+server:
+  compression:
+    enabled: true
+    mime-types: text/html,text/plain,text/css,application/javascript,application/json, application/zip, application/octet-stream
+
+
+
+jwt:
+  secret : ${JWT_SECRET}
+

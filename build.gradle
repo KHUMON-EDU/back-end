@@ -33,6 +33,21 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    //데이터베이스 의존성
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    //JWT 의존성
+    implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    //파일 처리 의존성
+    implementation 'commons-fileupload:commons-fileupload:1.5'
+    implementation 'commons-io:commons-io:2.11.0'
+    //Redis 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    //AWS 의존성
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 }
 
 tasks.named('test') {
