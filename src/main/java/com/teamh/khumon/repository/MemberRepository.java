@@ -1,0 +1,7 @@
+package com.teamh.khumon.repository;
+
+import com.teamh.khumon.domain.Member;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MemberRepository extends JpaRepository<Member, Long> {
+}
