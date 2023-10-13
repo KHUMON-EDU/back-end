@@ -43,7 +43,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         Member member = memberRepository.findByUsername(username).get();
 
         String uri = createURI(accessToken, member.getId(), member.getNickname()).toString();
-        // Access Token과 Refresh Token을 포함한 URL을 생성
         response.sendRedirect(uri);   // sendRedirect() 메서드를 이용해 Frontend 애플리케이션 쪽으로 리다이렉트
     }
 
