@@ -25,12 +25,17 @@ public class Member extends BaseEntity implements UserDetails {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String username; //OAuth2 고유 식별자
+
+
     @Column(nullable = false, unique = true)
     private String nickname;
 
+
     @Column(nullable = false)
-    private String password;
+    @Enumerated(EnumType.STRING)
+    private OAuth2Provider oAuth2Provider;
+
 
     @Column(nullable = false)
     @Builder.Default
@@ -47,12 +52,12 @@ public class Member extends BaseEntity implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.password;
+        return null;
     }
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.username;
     }
 
     @Override
