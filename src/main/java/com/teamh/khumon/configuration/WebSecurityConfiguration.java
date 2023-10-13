@@ -1,7 +1,8 @@
 package com.teamh.khumon.configuration;
 
 
-import com.teamh.khumon.security.JwtAuthenticationFilter;
+import com.teamh.khumon.security.*;
+import com.teamh.khumon.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -21,13 +22,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //1
 @Configuration
 @EnableMethodSecurity
-@EnableWebSecurity //모든 요청 URL이 스프링 시큐리티의 제어를 받도록 만드는 애너테이션이다.
-// 내부적으로 SecurityFilterChain이 동작하여 URL 필터가 적용
+@EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -35,15 +41,22 @@ public class WebSecurityConfiguration {
                 .formLogin(AbstractHttpConfigurer::disable)//form 형태의 로그인 disable
                 .csrf(AbstractHttpConfigurer::disable)// csrf  disable
                 .cors(AbstractHttpConfigurer::disable)//cors disable
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)) //h2 데이터 베이스 사용을 위해
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .authorizeHttpRequests(
                         req -> req
-                                .requestMatchers(PathRequest.toH2Console()).permitAll() //h2
-                                .anyRequest().authenticated()
+                                .requestMatchers(PathRequest.toH2Console()).permitAll() //h2 허용
+                                .anyRequest().permitAll()
                 )
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .exceptionHandling(exceptionHanding -> exceptionHanding.accessDeniedHandler(customAccessDeniedHandler))
+                .exceptionHandling(authenticationEntryPoint -> authenticationEntryPoint.authenticationEntryPoint(customAuthenticationEntryPoint))
+                .oauth2Login(httpSecurityOAuth2LoginConfigurer -> {
+                    httpSecurityOAuth2LoginConfigurer.successHandler(oAuth2LoginSuccessHandler);
+                    httpSecurityOAuth2LoginConfigurer.failureHandler(oAuth2LoginFailureHandler);
+                    httpSecurityOAuth2LoginConfigurer.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService));
+                })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
