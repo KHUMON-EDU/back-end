@@ -20,9 +20,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@Service
 public class JwtProviderService {
 
     @Value("${jwt.secret}")

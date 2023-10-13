@@ -23,13 +23,16 @@ import java.io.IOException;
 import java.util.Optional;
 
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 
 
 
-@RequiredArgsConstructor
+
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
