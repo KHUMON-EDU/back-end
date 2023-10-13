@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
+@Service
 public class MemberDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
