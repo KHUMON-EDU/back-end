@@ -14,8 +14,8 @@ import java.util.List;
 
 @Getter
 @ToString(callSuper = true)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "member")
 @Builder
@@ -24,11 +24,12 @@ public class Member extends BaseEntity implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username; //OAuth2 고유 식별자
 
 
-    @Column(nullable = false, unique = true)
+
+    @Column(nullable = false)
     private String nickname;
 
 
