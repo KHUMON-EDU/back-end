@@ -10,8 +10,8 @@ import java.util.List;
 
 @Entity
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @ToString(callSuper = true)
 @Table(name = "learning_material")
