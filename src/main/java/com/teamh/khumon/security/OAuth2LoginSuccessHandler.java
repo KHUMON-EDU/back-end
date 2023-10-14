@@ -64,7 +64,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .scheme("http")
                 .host("localhost")
                 .port(3000)
-                .path("/oauth2/login")
+                .path("/#/oauth2/login")
                 .queryParams(queryParams)
                 .build()
                 .toUri();
