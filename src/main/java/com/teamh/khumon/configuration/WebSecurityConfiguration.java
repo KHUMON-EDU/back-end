@@ -17,6 +17,11 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 
 //1
@@ -40,8 +45,8 @@ public class WebSecurityConfiguration {
                 .httpBasic(AbstractHttpConfigurer::disable) //httpBasic, 즉 UI를 사용하는 것을 기본으로 하는 시큐리티 기본 설정을 disable
                 .formLogin(AbstractHttpConfigurer::disable)//form 형태의 로그인 disable
                 .csrf(AbstractHttpConfigurer::disable)// csrf  disable
-                .cors(AbstractHttpConfigurer::disable)//cors disable
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(
                         req -> req
                                 .requestMatchers(PathRequest.toH2Console()).permitAll() //h2 허용
@@ -64,5 +69,27 @@ public class WebSecurityConfiguration {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers(PathRequest.toH2Console());
+    }
+
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080"));
+        configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedMethod("*");
+
+        configuration.addAllowedHeader("authorization");
+        configuration.addAllowedHeader("Content-Type");
+        configuration.addExposedHeader("Cache-Control");
+
+        configuration.addExposedHeader("authorization");
+        configuration.addExposedHeader("Cache-Control");
+        configuration.addExposedHeader("Content-Type");
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
