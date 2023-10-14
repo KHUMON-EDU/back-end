@@ -20,7 +20,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
@@ -42,8 +44,16 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         Member member = memberRepository.findByUsername(username).get();
 
-        String uri = createURI(accessToken, member.getId(), member.getNickname()).toString();
-        response.sendRedirect(uri);   // sendRedirect() 메서드를 이용해 Frontend 애플리케이션 쪽으로 리다이렉트
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        queryParams.add("id", String.valueOf(member.getId()));
+        queryParams.add("access-token", accessToken);
+
+        String enNickname = URLEncoder.encode(member.getNickname(), StandardCharsets.UTF_8);
+        queryParams.add("nickname", enNickname);
+        log.info(enNickname);
+        String deNicname = URLDecoder.decode(enNickname, StandardCharsets.UTF_8);
+        log.info(deNicname);
+        response.sendRedirect(createURI() + "/#/oauth2/login?id=" + member.getId() + "&access-code=" + accessToken + "&nickname=" + enNickname );   // sendRedirect() 메서드를 이용해 Frontend 애플리케이션 쪽으로 리다이렉트
     }
 
 
@@ -54,18 +64,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         return oAuth2User.getUsername();
     }
 
-    private URI createURI(String accessToken,  Long userId, String nickname) throws UnsupportedEncodingException {
-        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        queryParams.add("id", String.valueOf(userId));
-        queryParams.add("access-token", accessToken);
-
+    private URI createURI() throws UnsupportedEncodingException {
         return UriComponentsBuilder
                 .newInstance()
                 .scheme("http")
                 .host("localhost")
                 .port(3000)
-                .path("/#/oauth2/login")
-                .queryParams(queryParams)
                 .build()
                 .toUri();
     }
