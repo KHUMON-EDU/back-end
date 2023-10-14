@@ -50,7 +50,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 재인증하지 않기 위해 사용자가 인증되었는지 확인.
         // 로그인은 되어있고 아직 인증은 안된 경우만 if문 내부 접근
-        log.info("token 값 유효성 체크 시작 토큰 : " + jwt);
         if (jwt.isPresent() && SecurityContextHolder.getContext().getAuthentication() == null
                 && jwtProviderService.validateToken(jwt.get())) {
             String OAuth2Id = jwtProviderService.extractOAuth2Id(jwt.get());
