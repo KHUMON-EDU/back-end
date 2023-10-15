@@ -42,14 +42,14 @@ public class WebSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .httpBasic(AbstractHttpConfigurer::disable) //httpBasic, 즉 UI를 사용하는 것을 기본으로 하는 시큐리티 기본 설정을 disable
-                .formLogin(AbstractHttpConfigurer::disable)//form 형태의 로그인 disable
-                .csrf(AbstractHttpConfigurer::disable)// csrf  disable
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(
                         req -> req
-                                .requestMatchers(PathRequest.toH2Console()).permitAll() //h2 허용
+                                .requestMatchers(PathRequest.toH2Console()).permitAll()
                                 .anyRequest().permitAll()
                 )
                 .sessionManagement(

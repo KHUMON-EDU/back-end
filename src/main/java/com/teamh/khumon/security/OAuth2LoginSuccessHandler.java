@@ -1,6 +1,6 @@
 package com.teamh.khumon.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.teamh.khumon.domain.Member;
 import com.teamh.khumon.dto.CustomOAuth2User;
 import com.teamh.khumon.repository.MemberRepository;

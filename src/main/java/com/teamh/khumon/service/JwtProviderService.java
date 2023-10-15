@@ -4,7 +4,6 @@ import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -87,7 +86,7 @@ public class JwtProviderService {
     }
 
 
-    public boolean validateToken(String token) { //토큰 발리데이션
+    public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret_key).parseClaimsJws(token);
             log.info("토큰 유효 체크 완료");

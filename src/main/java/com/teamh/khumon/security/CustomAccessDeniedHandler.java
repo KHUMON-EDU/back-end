@@ -16,7 +16,6 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
-    //권한이 없는 유저가 접근 할 시 처리하는 핸들러
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException)

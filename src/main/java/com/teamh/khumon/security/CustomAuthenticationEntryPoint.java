@@ -20,21 +20,17 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
-        log.info("인증 실패");
-        try {
-            setResponse(response);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    private void setResponse(HttpServletResponse response) throws IOException, JSONException {
         ObjectMapper objectMapper = new ObjectMapper();
         response.setContentType("application/json;charset=UTF-8");
         JSONObject responseJson = new JSONObject();
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        log.info("인증 실패");
+        try {
         responseJson.put("message", "인증이 실패했습니다.");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
         response.getWriter().write(objectMapper.writeValueAsString(responseJson));
     }
+
 }
