@@ -34,7 +34,6 @@ public class WebSecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
-
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
@@ -68,9 +67,10 @@ public class WebSecurityConfiguration {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers(PathRequest.toH2Console());
+        return web -> {
+            web.ignoring().requestMatchers(PathRequest.toH2Console());
+        };
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
