@@ -10,10 +10,10 @@ import lombok.ToString;
 @Getter
 public enum MediaFileType {
 
-    PDF("PDF"),
-    TEXT("TEXT"),
-    VIDEO("VIDEO"),
-    ETC("ETC");
+    PDF("pdf"),
+    TEXT("txt"),
+    VIDEO("mp4"),
+    ETC("etc");
 
     private final String fileType;
 
