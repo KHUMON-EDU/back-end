@@ -13,12 +13,21 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Setter
 @ToString(callSuper = true)
 @Table(name = "learning_material")
 public class LearningMaterial extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String content;
+
 
     @Enumerated(EnumType.STRING)
     private MediaFileType mediaFileType;
