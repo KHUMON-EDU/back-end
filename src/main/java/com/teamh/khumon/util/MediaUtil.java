@@ -13,15 +13,15 @@ import java.util.UUID;
 @Component
 public class MediaUtil {
 
-    private final String MAIN_DIR_NAME = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources";
+    private final String MAIN_DIR_NAME = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static";
 
-    private final String SUB_DIR_NAME = File.separator + "static";
+    private final String SUB_DIR_NAME =  File.separator + "material";
 
     public String uploadMaterial(MultipartFile media) throws Exception {
         log.info(MAIN_DIR_NAME);
         log.info(SUB_DIR_NAME);
         try {
-            File folder = new File(MAIN_DIR_NAME + SUB_DIR_NAME +  File.separator + "material");
+            File folder = new File(MAIN_DIR_NAME + SUB_DIR_NAME);
 
             if (!folder.exists()) {
                 folder.mkdirs();
