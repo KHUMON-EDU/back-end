@@ -10,6 +10,7 @@ import com.teamh.khumon.util.MediaUtil;
 import com.teamh.khumon.util.ObjectToDtoUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class LearningMaterialService {
 
@@ -34,6 +36,7 @@ public class LearningMaterialService {
     @Transactional
     public ResponseEntity<?> createLearningMaterial(Principal principal, MultipartFile multipartFile, String data) {
         Member member = memberRepository.findByUsername(principal.getName()).orElseThrow();
+        log.info(multipartFile.getOriginalFilename());
         try {
             LearningRequest learningRequest = (LearningRequest) new ObjectToDtoUtil().jsonStrToObj(data, LearningRequest.class);
             LearningMaterial learningMaterial = LearningMaterial.builder()
@@ -44,7 +47,7 @@ public class LearningMaterialService {
             String uploadedFileUrl = mediaUtil.uploadMaterial(multipartFile);
             learningMaterial.setFileName(multipartFile.getOriginalFilename());
             learningMaterial.setFileURL(uploadedFileUrl);
-            learningMaterial.setMediaFileType(mediaUtil.findMediaType(multipartFile.getName()));
+            learningMaterial.setMediaFileType(mediaUtil.findMediaType(multipartFile.getOriginalFilename()));
             Long id = learningMaterialRepository.save(learningMaterial).getId();
             Map<String, Long> response = new HashMap<>();
             response.put("id", id);
