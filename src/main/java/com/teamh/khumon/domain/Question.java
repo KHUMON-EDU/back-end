@@ -21,6 +21,11 @@ public class Question extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "answer_id")
+    private Answer answer;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     @ToString.Exclude
