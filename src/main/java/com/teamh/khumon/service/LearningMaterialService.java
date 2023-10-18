@@ -3,7 +3,10 @@ package com.teamh.khumon.service;
 
 import com.teamh.khumon.domain.LearningMaterial;
 import com.teamh.khumon.domain.Member;
+import com.teamh.khumon.domain.Question;
+import com.teamh.khumon.dto.LearningMaterialResponse;
 import com.teamh.khumon.dto.LearningRequest;
+import com.teamh.khumon.dto.QuestionInformation;
 import com.teamh.khumon.repository.LearningMaterialRepository;
 import com.teamh.khumon.repository.MemberRepository;
 import com.teamh.khumon.util.MediaUtil;
@@ -18,7 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -55,5 +60,35 @@ public class LearningMaterialService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public ResponseEntity<?> getLearningMaterial(Long id, Principal principal) {
+        LearningMaterial learningMaterial = learningMaterialRepository.findById(id).orElseThrow();
+        if(!principal.getName().equals(learningMaterial.getMember().getUsername())){
+            throw new RuntimeException("작성자가 아님");
+        }
+
+        List<QuestionInformation> responses = learningMaterial.getQuestions().stream().map(question-> QuestionInformation.builder()
+                .id(question.getId())
+                .content(question.getContent())
+                .answer(question.getAnswer().getAnswer())
+                .build()).toList();
+
+
+
+        LearningMaterialResponse learningMaterialResponse = LearningMaterialResponse.builder()
+                .id(learningMaterial.getId())
+                .title(learningMaterial.getTitle())
+                .content(learningMaterial.getContent())
+                .script(learningMaterial.getScript())
+                .summary(learningMaterial.getSummary())
+                .mediaFileType(learningMaterial.getMediaFileType().getFileType())
+                .mediaOriginalName(learningMaterial.getFileName())
+                .mediaURL(learningMaterial.getFileURL())
+                .createdDateTime(learningMaterial.getCreatedAt())
+                .modifiedDateTime(learningMaterial.getUpdateAt())
+                .questionInformations(responses).build();
+
+        return new ResponseEntity<>(learningMaterialResponse, HttpStatus.OK);
     }
 }
