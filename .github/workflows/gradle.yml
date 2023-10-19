@@ -63,7 +63,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
           JWT_HEADER: ${{ secrets.JWT_HEADER }}
-          DB_URL: ${{ secrets.DB_URL }}\n
+          DB_URL: ${{ secrets.DB_URL }
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_DRIVER: ${{ secrets.DB_DRIVER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
