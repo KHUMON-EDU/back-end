@@ -77,24 +77,3 @@ server:
   compression:
     enabled: true
     mime-types: text/html,text/plain,text/css,application/javascript,application/json, application/zip, application/octet-stream, application/pdf, video/mp4
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  server:
-    compression:
-      enabled: true
-      mime-types: text/html,text/plain,text/css,application/javascript, application/json, application/zip, application/octet-stream, application/pdf, video/mp4
-
