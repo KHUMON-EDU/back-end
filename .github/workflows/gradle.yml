@@ -1,0 +1,99 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: KHUMON CI TEST with Gradle
+
+on:
+  #이벤트 감지
+  pull_request:
+    types: [closed]
+  #특정 브렌치에 대하여 설정
+  push:
+    branches : ["feat/test-deploy"]
+  workflow_dispatch:
+
+env:
+
+
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps: # STEP BY STEP 실행
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17' #JDK 17.
+          distribution: 'zulu'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+        #jar 실행파일생성
+      - name: Build the *.jar executable as Gradle
+        uses: actions/upload-artifact@v2
+        with:
+          name: jarfile
+          path: build/libs/KHUMON-0.0.1-SNAPSHOT.jar
+        #파일 여부확인
+      - name: checkout file list
+        run: ls
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+            uses: docker/login-action@v1
+            with:
+              username: ${{ secrets.DOCKERHUB_USERNAME }}
+              password: ${{ secrets.DOCKERHUB_PASSWORD}}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker buildx create --use
+          docker buildx build -t chy0310/KHUMON:latest . --push
+        env:
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
+          JWT_HEADER: ${{ secrets.JWT_HEADER }}
+          DB_URL: ${{ secrets.DB_URL }}\n
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_DRIVER: ${{ secrets.DB_DRIVER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_CLIENT_SCOPE: ${{ secrets.GOOGLE_CLIENT_SCOPE }}
+          GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
+          KAKAO_AUTHORIZATION_GRANT_CODE: ${{ secrets.KAKAO_AUTHORIZATION_GRANT_CODE }}
+          KAKAO_AUTHORIZATION_URI: ${{ secrets.KAKAO_AUTHORIZATION_URI }}
+          KAKAO_CLIENT_AUTHENTICATION_METHOD: ${{ secrets.KAKAO_CLIENT_AUTHENTICATION_METHOD }}
+          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}
+          KAKAO_SCOPE: ${{ secrets.KAKAO_SCOPE }}
+          KAKAO_TOKEN_URI: ${{ secrets.KAKAO_TOKEN_URI }}
+          KAKAO_USER_INFO_URI: ${{ secrets.KAKAO_USER_INFO_URI }}
+          KAKAO_USER_NAME_ATTRIBUTE: ${{ secrets.KAKAO_USER_NAME_ATTRIBUTE }}
+          NAVER_AUTHORIZATION_GRANT_TYPE: ${{ secrets.NAVER_AUTHORIZATION_GRANT_TYPE }}
+          NAVER_AUTHORIZATION_URI: ${{ secrets.NAVER_AUTHORIZATION_URI }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          NAVER_REDIRECT_URI: ${{ secrets.NAVER_REDIRECT_URI }}
+          NAVER_SCOPE: ${{ secrets.NAVER_SCOPE }}
+          NAVER_TOKEN_URI: ${{ secrets.NAVER_TOKEN_URI }}
+          NAVER_USER_INFO_URI: ${{ secrets.NAVER_USER_INFO_URI }}
+          NAVER_USER_NAME_ATTRIBUTE: ${{ secrets.NAVER_USER_NAME_ATTRIBUTE }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+
+
+
