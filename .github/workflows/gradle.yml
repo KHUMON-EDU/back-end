@@ -89,9 +89,9 @@ jobs:
           NAVER_USER_NAME_ATTRIBUTE: ${{ secrets.NAVER_USER_NAME_ATTRIBUTE }}
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
-          run: |
-            docker buildx create --use
-            docker buildx build -t chy0310/khumon:latest . --push
+        run: |
+          docker buildx create --use
+          docker buildx build -t chy0310/khumon:latest . --push
 
 
 
