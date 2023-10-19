@@ -56,9 +56,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD}}
 
       - name: Build and Push Docker Image
-        run: |
-          docker buildx create --use
-          docker buildx build -t chy0310/khumon:latest . --push
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
@@ -92,6 +89,9 @@ jobs:
           NAVER_USER_NAME_ATTRIBUTE: ${{ secrets.NAVER_USER_NAME_ATTRIBUTE }}
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          run: |
+            docker buildx create --use
+            docker buildx build -t chy0310/khumon:latest . --push
 
 
 
