@@ -13,7 +13,7 @@ on:
     types: [closed]
   #특정 브렌치에 대하여 설정
   push:
-    branches : ["feat/test-deploy"]
+    branches : ["feat/34-test-deploy"]
   workflow_dispatch:
 
 env:
