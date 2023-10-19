@@ -58,7 +58,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           docker buildx create --use
-          docker buildx build -t chy0310/KHUMON:latest . --push
+          docker buildx build -t chy0310/khumon:latest . --push
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
