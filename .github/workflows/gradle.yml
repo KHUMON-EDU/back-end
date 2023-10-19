@@ -1,0 +1,76 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
+name: KHUMON CI TEST with Gradle
+
+on:
+  #이벤트 감지
+  pull_request:
+    types: [closed]
+  #특정 브렌치에 대하여 설정
+  push:
+    branches : ["feat/34-test-deploy"]
+  workflow_dispatch:
+
+
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps: # STEP BY STEP 실행
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17' #JDK 17.
+          distribution: 'zulu'
+
+      - name: make application-prod.yml
+        run: |
+          cd ./src/main
+          cd ./resources
+          
+          # application.yml 파일 생성하기
+          touch ./application-prod.yml
+          
+          echo "${{ secrets.APPLICATION_PROD }}" >> ./application-prod.yml
+
+        shell: bash
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+        #jar 실행파일생성
+      - name: Build the *.jar executable as Gradle
+        uses: actions/upload-artifact@v2
+        with:
+          name: jarfile
+          path: build/libs/KHUMON-0.0.1-SNAPSHOT.jar
+        #파일 여부확인
+      - name: checkout file list
+        run: ls
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD}}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker buildx create --use
+          docker buildx build -t chy0310/khumon:latest . --push
+
+
+

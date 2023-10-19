@@ -49,6 +49,8 @@ dependencies {
     //AWS 의존성
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+
+    implementation group: 'org.json', name: 'json', version: '20200518'
 }
 
 tasks.named('test') {
