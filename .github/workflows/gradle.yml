@@ -30,6 +30,18 @@ jobs:
           java-version: '17' #JDK 17.
           distribution: 'zulu'
 
+      - name: make application-prod.yml
+        run: |
+          cd ./src/main
+          cd ./resources
+          
+          # application.yml 파일 생성하기
+          touch ./application-prod.yml
+          
+          echo "${{ secrets.APPLICATION_PROD }}" >> ./application-prod.yml
+
+        shell: bash
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -56,39 +68,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD}}
 
       - name: Build and Push Docker Image
-        env:
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
-          JWT_HEADER: ${{ secrets.JWT_HEADER }}
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_DRIVER: ${{ secrets.DB_DRIVER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          GOOGLE_CLIENT_SCOPE: ${{ secrets.GOOGLE_CLIENT_SCOPE }}
-          GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
-          KAKAO_AUTHORIZATION_GRANT_CODE: ${{ secrets.KAKAO_AUTHORIZATION_GRANT_CODE }}
-          KAKAO_AUTHORIZATION_URI: ${{ secrets.KAKAO_AUTHORIZATION_URI }}
-          KAKAO_CLIENT_AUTHENTICATION_METHOD: ${{ secrets.KAKAO_CLIENT_AUTHENTICATION_METHOD }}
-          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
-          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
-          KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}
-          KAKAO_SCOPE: ${{ secrets.KAKAO_SCOPE }}
-          KAKAO_TOKEN_URI: ${{ secrets.KAKAO_TOKEN_URI }}
-          KAKAO_USER_INFO_URI: ${{ secrets.KAKAO_USER_INFO_URI }}
-          KAKAO_USER_NAME_ATTRIBUTE: ${{ secrets.KAKAO_USER_NAME_ATTRIBUTE }}
-          NAVER_AUTHORIZATION_GRANT_TYPE: ${{ secrets.NAVER_AUTHORIZATION_GRANT_TYPE }}
-          NAVER_AUTHORIZATION_URI: ${{ secrets.NAVER_AUTHORIZATION_URI }}
-          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
-          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
-          NAVER_REDIRECT_URI: ${{ secrets.NAVER_REDIRECT_URI }}
-          NAVER_SCOPE: ${{ secrets.NAVER_SCOPE }}
-          NAVER_TOKEN_URI: ${{ secrets.NAVER_TOKEN_URI }}
-          NAVER_USER_INFO_URI: ${{ secrets.NAVER_USER_INFO_URI }}
-          NAVER_USER_NAME_ATTRIBUTE: ${{ secrets.NAVER_USER_NAME_ATTRIBUTE }}
-          REDIS_HOST: ${{ secrets.REDIS_HOST }}
-          REDIS_PORT: ${{ secrets.REDIS_PORT }}
         run: |
           docker buildx create --use
           docker buildx build -t chy0310/khumon:latest . --push
