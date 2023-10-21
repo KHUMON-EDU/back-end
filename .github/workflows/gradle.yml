@@ -69,7 +69,7 @@ jobs:
       - name: Build and Push Docker Image of khumon
         run: |
           docker buildx create --use
-          docker buildx build -t chy0310/khumon:latest khumon-docker/ --push
+          docker buildx build -t chy0310/khumon:latest . --push
 
       - name: Build and Push Docker Image of nginx
         run : |
