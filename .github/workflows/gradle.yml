@@ -71,8 +71,3 @@ jobs:
           docker buildx create --use
           docker buildx build -t chy0310/khumon:latest . --push
 
-      - name: Build and Push Docker Image of nginx
-        run : |
-          docker buildx create --use
-          docker buildx build -t chy0310/nginx:latest nginx/ --push
-
