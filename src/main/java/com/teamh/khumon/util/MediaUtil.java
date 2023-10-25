@@ -61,8 +61,7 @@ public class MediaUtil {
             log.info("video");
             return MediaFileType.VIDEO;
         }else{
-            log.info("etc");
-            return MediaFileType.ETC;
+            throw  new RuntimeException("파일 포맷을 지원하지 않음");
         }
     }
 
