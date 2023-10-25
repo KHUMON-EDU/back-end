@@ -1,6 +1,7 @@
 package com.teamh.khumon.service;
 
 
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.teamh.khumon.domain.LearningMaterial;
 import com.teamh.khumon.domain.Member;
 import com.teamh.khumon.domain.Question;
@@ -9,6 +10,7 @@ import com.teamh.khumon.dto.LearningRequest;
 import com.teamh.khumon.dto.QuestionInformation;
 import com.teamh.khumon.repository.LearningMaterialRepository;
 import com.teamh.khumon.repository.MemberRepository;
+import com.teamh.khumon.util.AmazonS3Util;
 import com.teamh.khumon.util.MediaUtil;
 import com.teamh.khumon.util.ObjectToDtoUtil;
 import jakarta.transaction.Transactional;
@@ -37,6 +39,8 @@ public class LearningMaterialService {
 
     private final MediaUtil mediaUtil;
 
+    private final AmazonS3Util amazonS3Util;
+
 
     @Transactional
     public ResponseEntity<?> createLearningMaterial(Principal principal, MultipartFile multipartFile, String data) {
@@ -49,11 +53,12 @@ public class LearningMaterialService {
                     .content(learningRequest.getContent())
                     .member(member)
                     .build();
-            String uploadedFileUrl = mediaUtil.uploadMaterial(multipartFile);
+            Long id = learningMaterialRepository.save(learningMaterial).getId();
+            String uploadedFileUrl = amazonS3Util.uploadS3Object(principal.getName(), multipartFile, id);
             learningMaterial.setFileName(multipartFile.getOriginalFilename());
             learningMaterial.setFileURL(uploadedFileUrl);
             learningMaterial.setMediaFileType(mediaUtil.findMediaType(multipartFile.getOriginalFilename()));
-            Long id = learningMaterialRepository.save(learningMaterial).getId();
+
             Map<String, Long> response = new HashMap<>();
             response.put("id", id);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
