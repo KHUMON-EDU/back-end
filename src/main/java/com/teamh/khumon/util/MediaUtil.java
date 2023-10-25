@@ -1,8 +1,11 @@
 package com.teamh.khumon.util;
 
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.teamh.khumon.domain.MediaFileType;
 import io.lettuce.core.dynamic.annotation.CommandNaming;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,12 +14,14 @@ import java.util.UUID;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class MediaUtil {
 
     private final String MAIN_DIR_NAME = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static";
 
     private final String SUB_DIR_NAME =  File.separator + "material";
 
+    @Deprecated
     public String uploadMaterial(MultipartFile media) throws Exception {
         log.info(MAIN_DIR_NAME);
         log.info(SUB_DIR_NAME);
@@ -43,12 +48,7 @@ public class MediaUtil {
         }
     }
 
-
-
-
-
     public MediaFileType findMediaType(String fileName) {
-
         String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
         log.info("extension : " + extension);
         if (extension.equals("txt")) {
