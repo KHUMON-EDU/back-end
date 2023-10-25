@@ -38,10 +38,10 @@ public class LearningMaterial extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MediaFileType mediaFileType;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String fileName;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String fileURL;
 
     @ManyToOne(fetch = FetchType.LAZY)
