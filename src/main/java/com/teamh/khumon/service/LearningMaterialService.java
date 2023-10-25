@@ -3,6 +3,7 @@ package com.teamh.khumon.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.teamh.khumon.domain.LearningMaterial;
+import com.teamh.khumon.domain.MediaFileType;
 import com.teamh.khumon.domain.Member;
 import com.teamh.khumon.domain.Question;
 import com.teamh.khumon.dto.LearningMaterialResponse;
@@ -16,11 +17,14 @@ import com.teamh.khumon.util.ObjectToDtoUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +47,7 @@ public class LearningMaterialService {
 
 
     @Transactional
-    public ResponseEntity<?> createLearningMaterial(Principal principal, MultipartFile multipartFile, String data) {
+    public ResponseEntity<?> createLearningMaterial(Principal principal, MultipartFile multipartFile, String data) throws IOException {
         Member member = memberRepository.findByUsername(principal.getName()).orElseThrow();
         log.info(multipartFile.getOriginalFilename());
         try {
@@ -58,6 +62,22 @@ public class LearningMaterialService {
             learningMaterial.setFileName(multipartFile.getOriginalFilename());
             learningMaterial.setFileURL(uploadedFileUrl);
             learningMaterial.setMediaFileType(mediaUtil.findMediaType(multipartFile.getOriginalFilename()));
+
+            if(learningMaterial.getMediaFileType().getFileType().equals(MediaFileType.TEXT.getFileType())){
+                //리팩토링 필요
+                String content = mediaUtil.readFileToString(multipartFile);
+                String response = mediaUtil.postToLLMforText(content);
+                log.info(response);
+            }  else if(learningMaterial.getMediaFileType().getFileType().equals(MediaFileType.PDF.getFileType())){
+                String response = mediaUtil.postToLLMforPDF(multipartFile);
+                log.info(response);
+            }else if (learningMaterial.getMediaFileType().getFileType().equals(MediaFileType.VIDEO.getFileType())){
+                String response = mediaUtil.postToLLMforVideo(multipartFile);
+                log.info(response);
+            }
+
+
+
 
             Map<String, Long> response = new HashMap<>();
             response.put("id", id);
@@ -96,4 +116,6 @@ public class LearningMaterialService {
 
         return new ResponseEntity<>(learningMaterialResponse, HttpStatus.OK);
     }
+
+
 }
