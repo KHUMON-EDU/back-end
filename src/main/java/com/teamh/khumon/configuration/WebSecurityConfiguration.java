@@ -65,6 +65,8 @@ public class WebSecurityConfiguration {
         return http.build();
     }
 
+
+    
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> {

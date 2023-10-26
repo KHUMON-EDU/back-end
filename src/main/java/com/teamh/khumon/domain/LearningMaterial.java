@@ -28,12 +28,8 @@ public class LearningMaterial extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column
-    private String script;
-
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String summary;
-
 
     @Enumerated(EnumType.STRING)
     private MediaFileType mediaFileType;
