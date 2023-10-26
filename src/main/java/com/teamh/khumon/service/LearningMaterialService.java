@@ -6,6 +6,7 @@ import com.teamh.khumon.domain.LearningMaterial;
 import com.teamh.khumon.domain.MediaFileType;
 import com.teamh.khumon.domain.Member;
 import com.teamh.khumon.domain.Question;
+import com.teamh.khumon.dto.AIResponse;
 import com.teamh.khumon.dto.LearningMaterialResponse;
 import com.teamh.khumon.dto.LearningRequest;
 import com.teamh.khumon.dto.QuestionInformation;
@@ -41,6 +42,8 @@ public class LearningMaterialService {
 
     private final LearningMaterialRepository learningMaterialRepository;
 
+    private final QuestionAnswerService questionAnswerService;
+
     private final MediaUtil mediaUtil;
 
     private final AmazonS3Util amazonS3Util;
@@ -62,22 +65,27 @@ public class LearningMaterialService {
             learningMaterial.setFileName(multipartFile.getOriginalFilename());
             learningMaterial.setFileURL(uploadedFileUrl);
             learningMaterial.setMediaFileType(mediaUtil.findMediaType(multipartFile.getOriginalFilename()));
-
+            String aiServerResponse = null;
             if(learningMaterial.getMediaFileType().getFileType().equals(MediaFileType.TEXT.getFileType())){
                 //리팩토링 필요
                 String content = mediaUtil.readFileToString(multipartFile);
-                String response = mediaUtil.postToLLMforText(content);
-                log.info(response);
+                aiServerResponse  = mediaUtil.postToLLMforText(content);
+                log.info(aiServerResponse);
             }  else if(learningMaterial.getMediaFileType().getFileType().equals(MediaFileType.PDF.getFileType())){
-                String response = mediaUtil.postToLLMforPDF(multipartFile);
-                log.info(response);
+                aiServerResponse = mediaUtil.postToLLMforPDF(multipartFile);
+                log.info(aiServerResponse);
             }else if (learningMaterial.getMediaFileType().getFileType().equals(MediaFileType.VIDEO.getFileType())){
-                String response = mediaUtil.postToLLMforVideo(multipartFile);
-                log.info(response);
+                aiServerResponse = mediaUtil.postToLLMforVideo(multipartFile);
+                log.info(aiServerResponse);
             }
 
+            AIResponse aiResponse= (AIResponse) new ObjectToDtoUtil().jsonStrToObj(aiServerResponse, AIResponse.class);
+            log.info(aiResponse.toString());
 
+            learningMaterial.setSummary(aiResponse.getSummary());
+            List<Question> questions = questionAnswerService.saveQuestionAndAnswer(aiResponse, member, learningMaterial);
 
+            learningMaterial.setQuestions(questions);
 
             Map<String, Long> response = new HashMap<>();
             response.put("id", id);
@@ -105,7 +113,6 @@ public class LearningMaterialService {
                 .id(learningMaterial.getId())
                 .title(learningMaterial.getTitle())
                 .content(learningMaterial.getContent())
-                .script(learningMaterial.getScript())
                 .summary(learningMaterial.getSummary())
                 .mediaFileType(learningMaterial.getMediaFileType().getFileType())
                 .mediaOriginalName(learningMaterial.getFileName())
