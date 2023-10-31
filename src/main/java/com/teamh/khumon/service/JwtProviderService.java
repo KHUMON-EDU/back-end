@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
+import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +36,11 @@ public class JwtProviderService {
     @Value("${jwt.access.header}")
     private String ACCESS_HEADER_KEY;
 
+    private static final String BEARER = "Bearer ";
 
 
-    private final GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
+
+    private final GrantedAuthoritiesMapper authoritiesMapper = new SimpleAuthorityMapper();
 
     @PostConstruct
     protected void init() {
@@ -53,7 +56,7 @@ public class JwtProviderService {
     }
 
     public Optional<String> extractAccessToken(HttpServletRequest request) throws IOException, ServletException {
-        return Optional.ofNullable(request.getHeader(ACCESS_HEADER_KEY));
+        return Optional.ofNullable(request.getHeader(ACCESS_HEADER_KEY)).filter(accessToken -> accessToken.startsWith(BEARER)).map(accessToken -> accessToken.replace(BEARER, ""));
     }
 
 
