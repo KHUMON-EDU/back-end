@@ -1,15 +1,11 @@
 package com.teamh.khumon.service;
 
 
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.teamh.khumon.domain.LearningMaterial;
 import com.teamh.khumon.domain.MediaFileType;
 import com.teamh.khumon.domain.Member;
 import com.teamh.khumon.domain.Question;
-import com.teamh.khumon.dto.AIResponse;
-import com.teamh.khumon.dto.LearningMaterialResponse;
-import com.teamh.khumon.dto.LearningRequest;
-import com.teamh.khumon.dto.QuestionInformation;
+import com.teamh.khumon.dto.*;
 import com.teamh.khumon.repository.LearningMaterialRepository;
 import com.teamh.khumon.repository.MemberRepository;
 import com.teamh.khumon.util.AmazonS3Util;
@@ -18,19 +14,18 @@ import com.teamh.khumon.util.ObjectToDtoUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -125,4 +120,29 @@ public class LearningMaterialService {
     }
 
 
+    public ResponseEntity<?> getLearningMaterials(Principal principal, Pageable pageable, String search) {
+        Member member = memberRepository.findByUsername(principal.getName()).orElseThrow();
+        Page<LearningMaterial> learningMaterials = learningMaterialRepository.findByMemberIdAndTitleContainingOrContentContaining(member.getId(), search, search, pageable);
+        List<LearningMaterialContent> learningMaterialContents = learningMaterials.getContent().stream().map(learningMaterial -> LearningMaterialContent.builder()
+                .title(learningMaterial.getTitle())
+                .content(learningMaterial.getContent())
+                .createAt(learningMaterial.getCreatedAt())
+                .modifiedAt(learningMaterial.getUpdateAt())
+                .build()).toList();
+
+        OffsetPagination offsetPagination = OffsetPagination.builder()
+                .content(learningMaterialContents)
+                .isEmpty(learningMaterials.isEmpty())
+                .isFirst(learningMaterials.isFirst())
+                .isLast(learningMaterials.isLast())
+                .numberOfElements(learningMaterials.getNumberOfElements())
+                .pageNumber(learningMaterials.getNumber())
+                .size(learningMaterials.getSize())
+                .totalElements(learningMaterials.getTotalElements())
+                .totalPages(learningMaterials.getTotalPages())
+                .build();
+
+
+        return new ResponseEntity<OffsetPagination>(offsetPagination, HttpStatus.OK);
+    }
 }

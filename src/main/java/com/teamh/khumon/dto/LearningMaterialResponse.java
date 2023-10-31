@@ -19,7 +19,6 @@ public class LearningMaterialResponse {
     private String mediaFileType;
     private LocalDateTime createdDateTime;
     private LocalDateTime modifiedDateTime;
-    private String script;
     private String summary;
     private List<QuestionInformation> questionInformations;
 
