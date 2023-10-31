@@ -2,6 +2,9 @@ package com.teamh.khumon.controller;
 
 import com.teamh.khumon.service.LearningMaterialService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +34,15 @@ public class LearningMaterialController {
     public ResponseEntity<?> getLearningMaterial(@PathVariable(name = "learningMaterialId") Long id, Principal principal){
         return learningMaterialService.getLearningMaterial(id, principal);
     }
+
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/learning-materials") //
+    public ResponseEntity<?> getLearningMaterials(Principal principal, @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 10) Pageable pageable, @RequestParam(required = false, defaultValue = "") String search){
+        return learningMaterialService.getLearningMaterials(principal, pageable, search);
+    }
+
+
 
 
 }
