@@ -12,7 +12,9 @@ public enum MediaFileType {
 
     PDF("pdf"),
     TEXT("txt"),
-    VIDEO("mp4");
+
+    VIDEO("mp4"),
+    ETC("etc");
 
     private final String fileType;
 

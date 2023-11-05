@@ -42,8 +42,5 @@ public class LearningMaterialController {
         return learningMaterialService.getLearningMaterials(principal, pageable, search);
     }
 
-
-
-
 }
 
