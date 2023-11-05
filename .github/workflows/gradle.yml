@@ -13,7 +13,7 @@ on:
     types: [closed]
   #특정 브렌치에 대하여 설정
   push:
-    branches : ["feat/34-test-deploy", "feat/36-nginx"]
+    branches : ["feat/34-test-deploy", "feat/36-nginx", "feat/51-deploy-ec2"]
   workflow_dispatch:
 
 
@@ -71,3 +71,33 @@ jobs:
           docker buildx create --use
           docker buildx build -t chy0310/khumon:latest . --push
 
+      - name: create remote directory
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.EC2_HOST }}
+            username: ubuntu
+            key: ${{ secrets.EC2_SECRET }}
+            script: mkdir -p ~/srv/ubuntu
+
+          - name: copy source via ssh key
+            uses: burnett01/rsync-deployments@4.1
+            with:
+              switches: -avzr --delete
+              remote_path: ~/
+              remote_host: ${{ secrets.EC2_HOST }}
+              remote_user: ubuntu
+              remote_key: ${{ secrets.EC2_SECRET }}
+
+          - name: executing remote ssh commands using password
+            uses: appleboy/ssh-action@master
+            with:
+              host: ${{ secrets.EC2_HOST }}
+              username: ubuntu
+              key: ${{ secrets.EC2_SECRET }}
+              script: |
+                sh ~/deploy.sh
+                sudo docker stop $(sudo docker ps -a -q)
+                sudo docker rm $(sudo docker ps -a -q)
+                sudo docker rmi $(sudo docker images -q)
+                sudo docker-compose -f ~/docker-compose.yml pull
+                sudo docker-compose -f ~/docker-compose.yml up --build -d

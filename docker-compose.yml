@@ -9,12 +9,18 @@ services:
   khumon:
     container_name: khumon
     image: chy0310/khumon
-    ports:
-      - 8080:8080
+    expose:
+      - "8080"
     depends_on:
       - redis
   nginx:
     container_name: nginx
     image: chy0310/nginx
+    ports:
+      - "8080:8080"
     depends_on:
       - khumon
+
+
+  # ports는 외부 컨테이너에서 80 포트로 진입 시 80 포트로 넘겨준다는 뜻이며,
+  #expose는 같은 호스트 안에 있는 내부 컨테이너에서만 8080 포트로 진입할 수 있다는 뜻이다.
