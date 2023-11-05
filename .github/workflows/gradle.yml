@@ -71,14 +71,6 @@ jobs:
           docker buildx create --use
           docker buildx build -t chy0310/khumon:latest . --push
 
-      - name: create remote directory
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SECRET }}
-          script: mkdir -p ~/srv/ubuntu
-
       - name: copy source via ssh key
         uses: burnett01/rsync-deployments@4.1
         with:
