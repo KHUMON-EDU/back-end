@@ -145,4 +145,21 @@ public class LearningMaterialService {
 
         return new ResponseEntity<OffsetPagination>(offsetPagination, HttpStatus.OK);
     }
+
+
+
+    @Transactional
+    public ResponseEntity<?> modifyLearningMaterial(Long id, Principal principal, ModifyLearningMaterialRequest modifyLearningMaterialRequest) {
+        LearningMaterial learningMaterial = learningMaterialRepository.findById(id).orElseThrow();
+        if(!principal.getName().equals(learningMaterial.getMember().getUsername())){
+            throw new RuntimeException("작성자가 아님");
+        }
+        if(modifyLearningMaterialRequest.getTitle() != null){
+            learningMaterial.setTitle(modifyLearningMaterialRequest.getTitle());
+        }
+        if(modifyLearningMaterialRequest.getContent() != null){
+            learningMaterial.setContent(modifyLearningMaterialRequest.getContent());
+        }
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
 }
