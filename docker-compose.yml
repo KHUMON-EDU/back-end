@@ -1,6 +1,9 @@
 version: '3.4'
 
 services:
+  nginx:
+    container_name: nginx
+    image: chy0310/nginx
   redis:
     container_name: redis
     image: redis
@@ -10,14 +13,12 @@ services:
     container_name: khumon
     image: chy0310/khumon
     ports:
-      - 8080:8080
+      - "8080:8080"
     depends_on:
       - redis
-  nginx:
-    container_name: nginx
-    image: chy0310/nginx
-    depends_on:
-      - khumon
+
+
+
 
 
   # ports는 외부 컨테이너에서 80 포트로 진입 시 80 포트로 넘겨준다는 뜻이며,
