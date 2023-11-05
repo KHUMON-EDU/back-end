@@ -12,7 +12,6 @@ public enum MediaFileType {
 
     PDF("pdf"),
     TEXT("txt"),
-
     VIDEO("mp4"),
     ETC("etc");
 
