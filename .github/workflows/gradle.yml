@@ -71,15 +71,6 @@ jobs:
           docker buildx create --use
           docker buildx build -t chy0310/khumon:latest . --push
 
-      - name: copy source via ssh key
-        uses: burnett01/rsync-deployments@4.1
-        with:
-          switches: -avzr --delete
-          remote_path: ~/
-          remote_host: ${{ secrets.EC2_HOST }}
-          remote_user: ubuntu
-          remote_key: ${{ secrets.EC2_SECRET }}
-
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
         with:
