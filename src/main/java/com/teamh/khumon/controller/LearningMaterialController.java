@@ -1,5 +1,6 @@
 package com.teamh.khumon.controller;
 
+import com.teamh.khumon.dto.ModifyLearningMaterialRequest;
 import com.teamh.khumon.service.LearningMaterialService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -30,17 +31,22 @@ public class LearningMaterialController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/learning-material/{learningMaterialId}")
-    public ResponseEntity<?> getLearningMaterial(@PathVariable(name = "learningMaterialId") Long id, Principal principal){
+    @GetMapping("/learning-material/{learning-material-id}")
+    public ResponseEntity<?> getLearningMaterial(@PathVariable(name = "learning-material-id") Long id, Principal principal){
         return learningMaterialService.getLearningMaterial(id, principal);
     }
 
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/learning-materials") //
+    @GetMapping("/learning-materials")
     public ResponseEntity<?> getLearningMaterials(Principal principal, @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 10) Pageable pageable, @RequestParam(required = false, defaultValue = "") String search){
         return learningMaterialService.getLearningMaterials(principal, pageable, search);
     }
 
+    @PreAuthorize("isAuthenticated()")
+    @PatchMapping("/learning-material/{learning-material-id}")
+    public ResponseEntity<?> modifyLearningMaterials(Principal principal, @PathVariable(name = "learning-material-id", required = true) Long id, @RequestBody ModifyLearningMaterialRequest modifyLearningMaterialRequest){
+        return learningMaterialService.modifyLearningMaterial(id, principal,modifyLearningMaterialRequest);
+    }
 }
 
