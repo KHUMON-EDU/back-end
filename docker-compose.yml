@@ -12,14 +12,38 @@ services:
     restart: always
     ports:
       - 80:80
+      - 443:443
     networks:
       - reverseproxy
     volumes:
       #docker-compose.yml과 같은 레벨에 둔 nginx.conf를 mount.
-      - ${PWD}/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../certbot/conf:/etc/letsencrypt # 추가
+      - ../certbot/www:/var/www/certbot # 추가
+      - ../../etc/letsencrypt/live/khumon-edu.kro.kr/fullchain.pem:/etc/letsencrypt/live/khumon-edu.kro.kr/fullchain.pem
+      - ../../etc/letsencrypt/live/khumon-edu.kro.kr/privkey.pem:/etc/letsencrypt/live/khumon-edu.kro.kr/privkey.pem
+      - ../../etc/letsencrypt/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
+      - ../../etc/letsencrypt/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf
+
     depends_on:
       - khumon
 
+
+  certbot:
+    container_name: certbot
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ../certbot/conf:/etc/letsencrypt # 추가
+      - ../certbot/www:/var/www/certbot # 추가
+      - ../../etc/letsencrypt/live/khumon-edu.kro.kr/fullchain.pem:/etc/letsencrypt/live/khumon-edu.kro.kr/fullchain.pem
+      - ../../etc/letsencrypt/live/khumon-edu.kro.kr/privkey.pem:/etc/letsencrypt/live/khumon-edu.kro.kr/privkey.pem
+      - ../../etc/letsencrypt/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem
+      - ../../etc/letsencrypt/options-ssl-nginx.conf:/etc/letsencrypt/options-ssl-nginx.conf
+    networks:
+      - reverseproxy
+    depends_on:
+      - nginx
   redis:
     container_name: redis
     image: redis
