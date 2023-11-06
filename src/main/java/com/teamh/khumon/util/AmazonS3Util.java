@@ -34,6 +34,7 @@ public class AmazonS3Util {
             log.info(filename);
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(object.getContentType());
+            objectMetadata.setContentEncoding("UTF-8");
             objectMetadata.setContentLength(object.getInputStream().available());
 
             amazonS3Client.putObject(bucket, filename, object.getInputStream(), objectMetadata);
