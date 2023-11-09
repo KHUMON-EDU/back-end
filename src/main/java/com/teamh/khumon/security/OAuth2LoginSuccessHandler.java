@@ -67,9 +67,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
     private URI createURI() throws UnsupportedEncodingException {
         return UriComponentsBuilder
                 .newInstance()
-                .scheme("http")
-                .host("localhost")
-                .port(3000)
+                .scheme("https")
+                .host("khumon-study.kro.kr")
                 .build()
                 .toUri();
     }
