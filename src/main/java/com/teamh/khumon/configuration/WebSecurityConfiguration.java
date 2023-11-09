@@ -80,7 +80,7 @@ public class WebSecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080", "http://facerain-dev.iptime.org:5000"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080", "http://facerain-dev.iptime.org:5000", "https://khumon-study.kro.kr", "https://khumon-edu.kro.kr"));
         configuration.addAllowedOriginPattern("*");
         configuration.addAllowedMethod("*");
 
