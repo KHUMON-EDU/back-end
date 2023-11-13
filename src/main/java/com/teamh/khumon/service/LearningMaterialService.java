@@ -39,6 +39,7 @@ public class LearningMaterialService {
 
     private final QuestionAnswerService questionAnswerService;
 
+
     private final MediaUtil mediaUtil;
 
     private final AmazonS3Util amazonS3Util;
@@ -56,6 +57,7 @@ public class LearningMaterialService {
                     .member(member)
                     .build();
             Long id = learningMaterialRepository.save(learningMaterial).getId();
+            log.info("저장된 ID : " + id);
             String uploadedFileUrl = amazonS3Util.uploadS3Object(principal.getName(), multipartFile, id);
             learningMaterial.setFileName(multipartFile.getOriginalFilename());
             learningMaterial.setFileURL(uploadedFileUrl);
@@ -170,6 +172,7 @@ public class LearningMaterialService {
         }
         amazonS3Util.deleteFile(learningMaterial.getFileURL());
         questionAnswerService.deleteQuestionAndAnswer(learningMaterial);
+        learningMaterialRepository.deleteById(id);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
