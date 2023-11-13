@@ -43,5 +43,19 @@ public class AmazonS3Util {
 
     }
 
+    public void deleteFile(String uploadFilePath) {
+        try {
+            boolean isObjectExist = amazonS3Client.doesObjectExist(bucket, uploadFilePath);
+            if (isObjectExist) {
+                amazonS3Client.deleteObject(bucket, uploadFilePath);
+                throw new Exception("예외 발생");
+            }
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            log.info("Delete File failed");
+        }
+
+    }
+
 
 }
