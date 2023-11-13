@@ -162,4 +162,15 @@ public class LearningMaterialService {
         }
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
+
+    public ResponseEntity<?> delete(Principal principal, Long id) {
+        LearningMaterial learningMaterial = learningMaterialRepository.findById(id).orElseThrow();
+        if(!principal.getName().equals(learningMaterial.getMember().getUsername())){
+            throw new RuntimeException("작성자가 아님");
+        }
+        amazonS3Util.deleteFile(learningMaterial.getFileURL());
+        questionAnswerService.deleteQuestionAndAnswer(learningMaterial);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
 }

@@ -48,5 +48,11 @@ public class LearningMaterialController {
     public ResponseEntity<?> modifyLearningMaterials(Principal principal, @PathVariable(name = "learning-material-id", required = true) Long id, @RequestBody ModifyLearningMaterialRequest modifyLearningMaterialRequest){
         return learningMaterialService.modifyLearningMaterial(id, principal,modifyLearningMaterialRequest);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/learning-material/{learning-material-id}")
+    public ResponseEntity<?> deleteLearning(Principal principal,@PathVariable(name ="learning-material-id")Long id){
+        return learningMaterialService.delete(principal, id);
+    }
 }
 

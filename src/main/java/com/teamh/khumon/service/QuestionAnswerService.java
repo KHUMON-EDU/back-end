@@ -46,4 +46,10 @@ public class QuestionAnswerService {
         return questions;
     }
 
+    @Transactional
+    void deleteQuestionAndAnswer(LearningMaterial learningMaterial){
+        List<Question> questionList = learningMaterial.getQuestions();
+        questionRepository.deleteAll(questionList);
+    }
+
 }

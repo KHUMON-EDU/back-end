@@ -23,7 +23,7 @@ public class Question extends BaseEntity {
     private String content;
 
 
-    @OneToOne(orphanRemoval = true)
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "answer_id")
     private Answer answer;
 
@@ -32,7 +32,7 @@ public class Question extends BaseEntity {
     @ToString.Exclude
     private Member member;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "learning_material_id")
     @ToString.Exclude
     private LearningMaterial learningMaterial;
