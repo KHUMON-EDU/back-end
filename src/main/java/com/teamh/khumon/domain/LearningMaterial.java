@@ -34,7 +34,7 @@ public class LearningMaterial extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MediaFileType mediaFileType;
 
-    @Column(unique = true)
+    @Column
     private String fileName;
 
     @Column(unique = true)

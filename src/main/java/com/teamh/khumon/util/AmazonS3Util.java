@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,7 +36,7 @@ public class AmazonS3Util {
             String filename = username + File.separator +  learningId + File.separator + generateFileName;
             log.info(filename);
             ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentType(object.getContentType());
+            objectMetadata.setContentType(object.getContentType() + ";charset=utf-8");
             objectMetadata.setContentEncoding("UTF-8");
             objectMetadata.setContentLength(object.getInputStream().available());
 
@@ -44,11 +47,21 @@ public class AmazonS3Util {
     }
 
     public void deleteFile(String uploadFilePath) {
+        List<String> splitPath = Arrays.stream(uploadFilePath.split("/")).toList().subList(3, 6);
+        String oAuth2Id = splitPath.get(0);
+        String postId = splitPath.get(1);
+        String fileName = splitPath.get(2);
+        String s3Key = oAuth2Id + "/" + postId + "/" + fileName;
+        log.info(s3Key);
+
         try {
-            boolean isObjectExist = amazonS3Client.doesObjectExist(bucket, uploadFilePath);
+            boolean isObjectExist = amazonS3Client.doesObjectExist(bucket, s3Key);
             if (isObjectExist) {
-                amazonS3Client.deleteObject(bucket, uploadFilePath);
-                throw new Exception("예외 발생");
+                log.info("존재함");
+                amazonS3Client.deleteObject(bucket, s3Key);
+            }
+            else{
+                log.info("존재 안함");
             }
         } catch (Exception e) {
             log.info(e.getMessage());

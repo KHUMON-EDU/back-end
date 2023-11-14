@@ -140,10 +140,15 @@ public class MediaUtil {
 
         HttpEntity<MultiValueMap<String, Object>> requestHttpEntity =
                 new HttpEntity<>(body, httpHeaders);
+        String response = null;
+        try {
+            response = restTemplate.postForObject(postUrl, requestHttpEntity, String.class);
+            log.info(response);
+            deleteMediaFile(destinationPathString);
 
-        String response = restTemplate.postForObject(postUrl, requestHttpEntity, String.class);
-        log.info(response);
-        deleteMediaFile(destinationPathString);
+        }catch (Exception E){
+            log.info(E.getMessage());
+        }
         return response;
     }
 
