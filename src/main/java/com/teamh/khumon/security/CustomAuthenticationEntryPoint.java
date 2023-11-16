@@ -12,6 +12,8 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -22,7 +24,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
         ObjectMapper objectMapper = new ObjectMapper();
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject responseJson = new JSONObject();
+        Map<String, String> responseJson = new HashMap<>();
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         log.info("인증 실패");
         try {
@@ -31,6 +33,9 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             throw new RuntimeException(e);
         }
         response.getWriter().write(objectMapper.writeValueAsString(responseJson));
+        response.getWriter().flush();
+        response.getWriter().close();
+
     }
 
 }

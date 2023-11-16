@@ -11,6 +11,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -21,7 +23,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         response.setContentType("application/json;charset=UTF-8");
-        JSONObject responseJson = new JSONObject();
+        Map<String, String> responseJson = new HashMap<>();
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         try {
             responseJson.put("message", "엑세스 권한이 없습니다.");
@@ -29,5 +31,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
             throw new RuntimeException(e);
         }
         response.getWriter().write(objectMapper.writeValueAsString(responseJson));
+        response.getWriter().flush();
+        response.getWriter().close();
+
     }
 }
