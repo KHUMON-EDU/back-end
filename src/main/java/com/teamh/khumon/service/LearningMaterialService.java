@@ -123,8 +123,12 @@ public class LearningMaterialService {
 
 
     public ResponseEntity<?> getLearningMaterials(Principal principal, Pageable pageable, String search) {
+        log.info("search : " + search);
         Member member = memberRepository.findByUsername(principal.getName()).orElseThrow();
-        Page<LearningMaterial> learningMaterials = learningMaterialRepository.findByMemberIdAndTitleContainingOrContentContaining(member.getId(), search, search, pageable);
+        log.info("member ID : " + member.getId());
+        //log.info(learningMaterialRepository.findAllByMemberId(member.getId()).toString());
+        Page<LearningMaterial> learningMaterials = learningMaterialRepository.findAllByTitleIsContainingAndMemberId(search, member.getId() , pageable);
+        //log.info(learningMaterials.getContent().toString());
         List<LearningMaterialContent> learningMaterialContents = learningMaterials.getContent().stream().map(learningMaterial -> LearningMaterialContent.builder()
                 .id(learningMaterial.getId())
                 .title(learningMaterial.getTitle())

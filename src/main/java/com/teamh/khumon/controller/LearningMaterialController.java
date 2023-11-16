@@ -39,7 +39,7 @@ public class LearningMaterialController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/learning-materials")
-    public ResponseEntity<?> getLearningMaterials(Principal principal, @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 10) Pageable pageable, @RequestParam(required = false, defaultValue = "") String search){
+    public ResponseEntity<?> getLearningMaterials(Principal principal, @PageableDefault(sort = "id", direction = Sort.Direction.DESC, size = 10) Pageable pageable, @RequestParam(required = false, defaultValue = "", value = "search") String search){
         return learningMaterialService.getLearningMaterials(principal, pageable, search);
     }
 
