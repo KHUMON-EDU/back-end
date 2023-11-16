@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class LearningMaterialContent {
-
+    private Long id;
     private String title;
     private String content;
     private LocalDateTime createAt;

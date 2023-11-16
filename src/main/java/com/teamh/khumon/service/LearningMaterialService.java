@@ -126,6 +126,7 @@ public class LearningMaterialService {
         Member member = memberRepository.findByUsername(principal.getName()).orElseThrow();
         Page<LearningMaterial> learningMaterials = learningMaterialRepository.findByMemberIdAndTitleContainingOrContentContaining(member.getId(), search, search, pageable);
         List<LearningMaterialContent> learningMaterialContents = learningMaterials.getContent().stream().map(learningMaterial -> LearningMaterialContent.builder()
+                .id(learningMaterial.getId())
                 .title(learningMaterial.getTitle())
                 .content(learningMaterial.getContent())
                 .createAt(learningMaterial.getCreatedAt())
