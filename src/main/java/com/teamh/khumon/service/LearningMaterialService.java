@@ -8,6 +8,7 @@ import com.teamh.khumon.domain.Question;
 import com.teamh.khumon.dto.*;
 import com.teamh.khumon.repository.LearningMaterialRepository;
 import com.teamh.khumon.repository.MemberRepository;
+import com.teamh.khumon.repository.QuestionRepository;
 import com.teamh.khumon.util.AmazonS3Util;
 import com.teamh.khumon.util.MediaUtil;
 import com.teamh.khumon.util.ObjectToDtoUtil;
@@ -41,7 +42,7 @@ public class LearningMaterialService {
 
     private final QuestionAnswerService questionAnswerService;
 
-
+    private final QuestionRepository questionRepository;
     private final MediaUtil mediaUtil;
 
     private final AmazonS3Util amazonS3Util;
@@ -103,6 +104,9 @@ public class LearningMaterialService {
         List<QuestionInformation> responses = learningMaterial.getQuestions().stream().map(question-> QuestionInformation.builder()
                 .id(question.getId())
                 .content(question.getContent())
+                .myAnswer(question.getMyAnswer() == null ? null : question.getMyAnswer())
+                .isCorrect(question.getIsCorrect() != null && question.getIsCorrect())
+                .whatWrong(question.getWhatWrong() == null ? null : question.getWhatWrong())
                 .answer(question.getAnswer().getAnswer())
                 .build()).toList();
 
@@ -195,6 +199,22 @@ public class LearningMaterialService {
                 return criteriaBuilder.and(memberIdPredicate, searchPredicate);
 
             };
+    }
+
+    public ResponseEntity<?> postMyAnswer(Principal principal, Long learningMaterialId, Long questionId, MyAnswerRequest myAnswerRequest) throws Exception {
+        LearningMaterial learningMaterial = learningMaterialRepository.findById(learningMaterialId).orElseThrow();
+        if(!principal.getName().equals(learningMaterial.getMember().getUsername())){
+            throw new RuntimeException("작성자가 아님");
+        }
+        Question question = questionRepository.findById(questionId).orElseThrow();
+        String myanswerResponse = mediaUtil.postToLLMforUserAnswer(myAnswerRequest, question.getContent());
+        MyAnswerAIResponse myAnswerAIResponse = (MyAnswerAIResponse) new ObjectToDtoUtil().jsonStrToObj(myanswerResponse, MyAnswerAIResponse.class);
+        log.info(myAnswerAIResponse.toString());
+
+        Long id = questionAnswerService.postMyAnswer(questionId, myAnswerRequest, myAnswerAIResponse);
+        Map<String, Long> response = new HashMap<>();
+        response.put("questionId", id);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 }

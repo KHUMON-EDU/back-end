@@ -10,5 +10,8 @@ import lombok.*;
 public class QuestionInformation {
     private Long id;
     private String content;
+    private String myAnswer;
+    private boolean isCorrect;
+    private String whatWrong;
     private String answer;
 }

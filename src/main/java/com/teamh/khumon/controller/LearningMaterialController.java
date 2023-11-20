@@ -1,8 +1,10 @@
 package com.teamh.khumon.controller;
 
 import com.teamh.khumon.dto.ModifyLearningMaterialRequest;
+import com.teamh.khumon.dto.MyAnswerRequest;
 import com.teamh.khumon.service.LearningMaterialService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -17,6 +19,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api")
 public class LearningMaterialController {
 
@@ -53,6 +56,13 @@ public class LearningMaterialController {
     @DeleteMapping("/learning-material/{learning-material-id}")
     public ResponseEntity<?> deleteLearning(Principal principal,@PathVariable(name ="learning-material-id")Long id){
         return learningMaterialService.delete(principal, id);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/learning-material/{learning-material-id}/question/{question-id}")
+    public ResponseEntity<?> postMyAnswer(Principal principal, @PathVariable(name="learning-material-id") Long learningMaterialId, @PathVariable(name="question-id") Long myanswerId, @RequestBody MyAnswerRequest myAnswerRequest) throws Exception {
+        log.info("엔드포인트 지남");
+        return learningMaterialService.postMyAnswer(principal, learningMaterialId, myanswerId, myAnswerRequest);
     }
 }
 
