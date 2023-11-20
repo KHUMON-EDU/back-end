@@ -1,12 +1,12 @@
 package com.teamh.khumon.service;
 
-import com.teamh.khumon.domain.Answer;
-import com.teamh.khumon.domain.LearningMaterial;
-import com.teamh.khumon.domain.Member;
-import com.teamh.khumon.domain.Question;
+import com.teamh.khumon.domain.*;
 import com.teamh.khumon.dto.AIResponse;
+import com.teamh.khumon.dto.MyAnswerAIResponse;
+import com.teamh.khumon.dto.MyAnswerRequest;
 import com.teamh.khumon.dto.Problem;
 import com.teamh.khumon.repository.AnswerRepository;
+
 import com.teamh.khumon.repository.QuestionRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +25,8 @@ public class QuestionAnswerService {
     private final QuestionRepository questionRepository;
 
     private final AnswerRepository answerRepository;
+
+//    private final MyAnswerRepository myAnswerRepository;
 
     @Transactional
     public List<Question> saveQuestionAndAnswer(AIResponse aiResponse, Member member, LearningMaterial learningMaterial){
@@ -52,4 +54,14 @@ public class QuestionAnswerService {
         questionRepository.deleteAll(questionList);
     }
 
+
+    @Transactional
+    public Long postMyAnswer(Long questionId, MyAnswerRequest myAnswerRequest, MyAnswerAIResponse myAnswerAIResponse) {
+        Question question = questionRepository.findById(questionId).orElseThrow();
+        question.setMyAnswer(myAnswerRequest.getContent());
+        question.setIsCorrect(myAnswerAIResponse.getCorrect());
+        question.setWhatWrong(myAnswerAIResponse.getAssessment());
+        questionRepository.save(question);
+        return questionId;
+    }
 }

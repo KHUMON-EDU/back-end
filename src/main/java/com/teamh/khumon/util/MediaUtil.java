@@ -1,6 +1,8 @@
 package com.teamh.khumon.util;
 
 import com.teamh.khumon.domain.MediaFileType;
+import com.teamh.khumon.domain.Question;
+import com.teamh.khumon.dto.MyAnswerRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONException;
@@ -149,6 +151,26 @@ public class MediaUtil {
         }catch (Exception E){
             log.info(E.getMessage());
         }
+        return response;
+    }
+
+
+    public String postToLLMforUserAnswer(MyAnswerRequest myAnswerRequest, String question) throws Exception {
+        String postUrl = "http://facerain-dev.iptime.org:5000/api/v1/generation/assessment";
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("question", question);
+        jsonObject.put("answer", myAnswerRequest.getContent());
+
+//question : STring
+//answer: STring
+        HttpEntity<String> requestHttpEntity =
+                new HttpEntity<>(jsonObject.toString(), httpHeaders);
+        String response = restTemplate.postForObject(postUrl, requestHttpEntity, String.class);
+        log.info(response);
         return response;
     }
 

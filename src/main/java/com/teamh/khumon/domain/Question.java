@@ -27,6 +27,16 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "answer_id")
     private Answer answer;
 
+//    @OneToOne(orphanRemoval = true, cascade = CascadeType.REMOVE)
+//    @JoinColumn(name = "my_answer_id")
+//    private MyAnswer myAnswer;
+
+    private String myAnswer;
+    private String whatWrong;
+    private Boolean isCorrect;
+
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     @ToString.Exclude
