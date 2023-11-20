@@ -105,7 +105,7 @@ public class LearningMaterialService {
                 .id(question.getId())
                 .content(question.getContent())
                 .myAnswer(question.getMyAnswer() == null ? null : question.getMyAnswer())
-                .isCorrect(question.getIsCorrect() != null && question.getIsCorrect())
+                .isCorrect(question.getIsCorrect() == null ? null :  question.getIsCorrect())
                 .whatWrong(question.getWhatWrong() == null ? null : question.getWhatWrong())
                 .answer(question.getAnswer().getAnswer())
                 .build()).toList();

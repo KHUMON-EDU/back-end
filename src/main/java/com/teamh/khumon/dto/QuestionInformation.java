@@ -11,7 +11,7 @@ public class QuestionInformation {
     private Long id;
     private String content;
     private String myAnswer;
-    private boolean isCorrect;
+    private Boolean isCorrect;
     private String whatWrong;
     private String answer;
 }
