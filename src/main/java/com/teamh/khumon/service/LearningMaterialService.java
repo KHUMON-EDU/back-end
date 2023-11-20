@@ -11,11 +11,13 @@ import com.teamh.khumon.repository.MemberRepository;
 import com.teamh.khumon.util.AmazonS3Util;
 import com.teamh.khumon.util.MediaUtil;
 import com.teamh.khumon.util.ObjectToDtoUtil;
+import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -126,9 +128,9 @@ public class LearningMaterialService {
         log.info("search : " + search);
         Member member = memberRepository.findByUsername(principal.getName()).orElseThrow();
         log.info("member ID : " + member.getId());
-        //log.info(learningMaterialRepository.findAllByMemberId(member.getId()).toString());
-        Page<LearningMaterial> learningMaterials = learningMaterialRepository.findAllByTitleIsContainingAndMemberId(search, member.getId() , pageable);
-        //log.info(learningMaterials.getContent().toString());
+        Specification<LearningMaterial> specification = search(search, member.getId());
+        Page<LearningMaterial> learningMaterials = learningMaterialRepository.findAll(specification, pageable);
+
         List<LearningMaterialContent> learningMaterialContents = learningMaterials.getContent().stream().map(learningMaterial -> LearningMaterialContent.builder()
                 .id(learningMaterial.getId())
                 .title(learningMaterial.getTitle())
@@ -179,6 +181,19 @@ public class LearningMaterialService {
         questionAnswerService.deleteQuestionAndAnswer(learningMaterial);
         learningMaterialRepository.deleteById(id);
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    private Specification<LearningMaterial> search(String kw, Long memberId) {
+        return (Root<LearningMaterial> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
+                criteriaQuery.distinct(true);  // 중복을 제거
+                root.join("member", JoinType.INNER);
+                Predicate memberIdPredicate = criteriaBuilder.equal(root.get("member").get("id"), memberId);
+                Predicate searchPredicate = criteriaBuilder.or(criteriaBuilder.like(root.get("title"), "%" + kw + "%"), // 제목
+                        criteriaBuilder.like(root.get("content"), "%" + kw + "%"),      // 내용
+                        criteriaBuilder.like(root.get("summary"), "%" + kw + "%"));  //script
+                return criteriaBuilder.and(memberIdPredicate, searchPredicate);
+
+            };
     }
 
 }
