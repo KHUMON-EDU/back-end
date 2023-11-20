@@ -32,6 +32,8 @@ public class Question extends BaseEntity {
 //    private MyAnswer myAnswer;
 
     private String myAnswer;
+
+    @Column(columnDefinition = "TEXT")
     private String whatWrong;
     private Boolean isCorrect;
 
