@@ -135,6 +135,7 @@ public class LearningMaterialService {
                 .id(learningMaterial.getId())
                 .title(learningMaterial.getTitle())
                 .content(learningMaterial.getContent())
+                .type(learningMaterial.getMediaFileType().getFileType())
                 .createAt(learningMaterial.getCreatedAt())
                 .modifiedAt(learningMaterial.getUpdateAt())
                 .build()).toList();

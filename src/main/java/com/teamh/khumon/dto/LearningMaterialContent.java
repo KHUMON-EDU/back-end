@@ -15,6 +15,7 @@ public class LearningMaterialContent {
     private Long id;
     private String title;
     private String content;
+    private String type;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
 
