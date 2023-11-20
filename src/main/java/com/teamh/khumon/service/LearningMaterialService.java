@@ -197,6 +197,7 @@ public class LearningMaterialService {
                         criteriaBuilder.like(root.get("content"), "%" + kw + "%"),      // 내용
                         criteriaBuilder.like(root.get("summary"), "%" + kw + "%"));  //script
                 return criteriaBuilder.and(memberIdPredicate, searchPredicate);
+
             };
     }
 
@@ -215,4 +216,5 @@ public class LearningMaterialService {
         response.put("questionId", id);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
 }
