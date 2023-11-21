@@ -14,7 +14,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000", "http://localhost:8080", "http://facerain-dev.iptime.org:5000", "https://khumon-study.kro.kr", "https://khumon-edu.kro.kr", "https://khumon-edu.kro.kr:3000", "https://khumon-edu.kro:80")
+                .allowedOrigins("http://localhost:3000", "http://localhost:8080", "http://facerain-dev.iptime.org:5000", "https://khumon-study.kro.kr:3000", "https://khumon-study.kro.kr:80", "https://khumon-edu.kro.kr", "https://khumon-edu.kro.kr:3000", "https://khumon-edu.kro:80", "https://khumon-edu.kro.kr:8080")
                 .allowedHeaders("authorization", "User-Agent", "Cache-Control", "Content-Type")
                 .exposedHeaders("authorization", "User-Agent", "Cache-Control", "Content-Type")
                 .allowedMethods("*");
