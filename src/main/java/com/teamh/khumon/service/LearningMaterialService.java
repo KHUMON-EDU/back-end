@@ -212,8 +212,10 @@ public class LearningMaterialService {
         log.info(myAnswerAIResponse.toString());
 
         Long id = questionAnswerService.postMyAnswer(questionId, myAnswerRequest, myAnswerAIResponse);
-        Map<String, Long> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("questionId", id);
+        response.put("isCorrect", myAnswerAIResponse.getCorrect());
+        response.put("assessment", myAnswerAIResponse.getAssessment());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
