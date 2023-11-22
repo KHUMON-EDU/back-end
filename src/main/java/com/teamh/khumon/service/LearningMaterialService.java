@@ -71,6 +71,7 @@ public class LearningMaterialService {
                 String content = mediaUtil.readFileToString(multipartFile);
                 aiServerResponse  = mediaUtil.postToLLMforText(content);
                 log.info(aiServerResponse);
+                learningMaterial.setTextData(content);
             }  else if(learningMaterial.getMediaFileType().getFileType().equals(MediaFileType.PDF.getFileType())){
                 aiServerResponse = mediaUtil.postToLLMforPDF(multipartFile);
                 log.info(aiServerResponse);
@@ -118,6 +119,7 @@ public class LearningMaterialService {
                 .content(learningMaterial.getContent())
                 .summary(learningMaterial.getSummary())
                 .mediaFileType(learningMaterial.getMediaFileType().getFileType())
+                .textData(learningMaterial.getMediaFileType().getFileType().equals("txt") ? learningMaterial.getTextData() : null)
                 .mediaOriginalName(learningMaterial.getFileName())
                 .mediaURL(learningMaterial.getFileURL())
                 .createdDateTime(learningMaterial.getCreatedAt())
@@ -218,5 +220,4 @@ public class LearningMaterialService {
         response.put("assessment", myAnswerAIResponse.getAssessment());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-
 }

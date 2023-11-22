@@ -20,6 +20,7 @@ public class LearningMaterialResponse {
     private LocalDateTime createdDateTime;
     private LocalDateTime modifiedDateTime;
     private String summary;
+    private String textData;
     private List<QuestionInformation> questionInformations;
 
 }
