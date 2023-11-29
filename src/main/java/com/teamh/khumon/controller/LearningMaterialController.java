@@ -64,5 +64,17 @@ public class LearningMaterialController {
         log.info("엔드포인트 지남");
         return learningMaterialService.postMyAnswer(principal, learningMaterialId, myanswerId, myAnswerRequest);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/learning-material/priority/{learning-material-id}")
+    public ResponseEntity<?> setPriority(@PathVariable(name = "learning-material-id")Long id, Principal principal){
+        return learningMaterialService.setPriority(principal, id);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/learning-material/unpriority/{learning-material-id}")
+    public ResponseEntity<?> unsetPriority(@PathVariable(name = "learning-material-id")Long id, Principal principal){
+        return learningMaterialService.unsetPriority(principal, id);
+    }
 }
 

@@ -1,23 +1,20 @@
 package com.teamh.khumon.dto;
 
-
 import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Builder
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
-@Builder
-public class LearningMaterialContent {
+public class PriorityLearningMaterialContent {
     private Long id;
     private String title;
     private String content;
+    private Boolean isPriority;
     private String type;
     private LocalDateTime createAt;
-    private Boolean isPriority;
     private LocalDateTime modifiedAt;
-
 }

@@ -13,6 +13,7 @@ import java.util.List;
 @ToString
 public class OffsetPagination {
     private List<LearningMaterialContent> content;
+    private List<PriorityLearningMaterialContent> priorityLearningMaterialContents;
     private Long totalElements;
     private Integer totalPages;
     private Integer size;

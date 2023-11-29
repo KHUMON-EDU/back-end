@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface LearningMaterialRepository extends JpaRepository<LearningMaterial, Long> {
 
-
+    List<LearningMaterial> findAllByMemberIdAndIsPriorityTrue(Long id);
 
 //    Page<LearningMaterial> findAllByTitleIsContainingAndMemberId(String search, Long memberId, Pageable pageable);
 

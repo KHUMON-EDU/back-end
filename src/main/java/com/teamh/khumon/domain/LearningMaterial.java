@@ -31,6 +31,9 @@ public class LearningMaterial extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String summary;
 
+    @Builder.Default
+    private Boolean isPriority = false;
+
     @Column(columnDefinition = "TEXT")
     private String textData;
 

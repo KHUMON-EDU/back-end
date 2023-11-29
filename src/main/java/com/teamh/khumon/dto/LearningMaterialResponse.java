@@ -14,6 +14,7 @@ public class LearningMaterialResponse {
     private Long id;
     private String title;
     private String content;
+    private Boolean isPriority;
     private String mediaURL;
     private String mediaOriginalName;
     private String mediaFileType;

@@ -119,6 +119,7 @@ public class LearningMaterialService {
                 .content(learningMaterial.getContent())
                 .summary(learningMaterial.getSummary())
                 .mediaFileType(learningMaterial.getMediaFileType().getFileType())
+                .isPriority(learningMaterial.getIsPriority())
                 .textData(learningMaterial.getMediaFileType().getFileType().equals("txt") ? learningMaterial.getTextData() : null)
                 .mediaOriginalName(learningMaterial.getFileName())
                 .mediaURL(learningMaterial.getFileURL())
@@ -136,12 +137,23 @@ public class LearningMaterialService {
         log.info("member ID : " + member.getId());
         Specification<LearningMaterial> specification = search(search, member.getId());
         Page<LearningMaterial> learningMaterials = learningMaterialRepository.findAll(specification, pageable);
-
+        List<LearningMaterial> prioritylearningMaterials = learningMaterialRepository.findAllByMemberIdAndIsPriorityTrue(member.getId());
         List<LearningMaterialContent> learningMaterialContents = learningMaterials.getContent().stream().map(learningMaterial -> LearningMaterialContent.builder()
                 .id(learningMaterial.getId())
                 .title(learningMaterial.getTitle())
                 .content(learningMaterial.getContent())
+                .isPriority(learningMaterial.getIsPriority())
                 .type(learningMaterial.getMediaFileType().getFileType())
+                .createAt(learningMaterial.getCreatedAt())
+                .modifiedAt(learningMaterial.getUpdateAt())
+                .build()).toList();
+
+        List<PriorityLearningMaterialContent> priorityLearningMaterialContents = prioritylearningMaterials.stream().map(learningMaterial -> PriorityLearningMaterialContent.builder()
+                .id(learningMaterial.getId())
+                .title(learningMaterial.getTitle())
+                .content(learningMaterial.getContent())
+                .type(learningMaterial.getMediaFileType().getFileType())
+                .isPriority(learningMaterial.getIsPriority())
                 .createAt(learningMaterial.getCreatedAt())
                 .modifiedAt(learningMaterial.getUpdateAt())
                 .build()).toList();
@@ -192,15 +204,15 @@ public class LearningMaterialService {
 
     private Specification<LearningMaterial> search(String kw, Long memberId) {
         return (Root<LearningMaterial> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) -> {
-                criteriaQuery.distinct(true);  // 중복을 제거
-                root.join("member", JoinType.INNER);
-                Predicate memberIdPredicate = criteriaBuilder.equal(root.get("member").get("id"), memberId);
-                Predicate searchPredicate = criteriaBuilder.or(criteriaBuilder.like(root.get("title"), "%" + kw + "%"), // 제목
-                        criteriaBuilder.like(root.get("content"), "%" + kw + "%"),      // 내용
-                        criteriaBuilder.like(root.get("summary"), "%" + kw + "%"));  //script
-                return criteriaBuilder.and(memberIdPredicate, searchPredicate);
+            criteriaQuery.distinct(true);  // 중복을 제거
+            root.join("member", JoinType.INNER);
+            Predicate memberIdPredicate = criteriaBuilder.equal(root.get("member").get("id"), memberId);
+            Predicate searchPredicate = criteriaBuilder.or(criteriaBuilder.like(root.get("title"), "%" + kw + "%"), // 제목
+                    criteriaBuilder.like(root.get("content"), "%" + kw + "%"),      // 내용
+                    criteriaBuilder.like(root.get("summary"), "%" + kw + "%"));  //script
+            return criteriaBuilder.and(memberIdPredicate, searchPredicate);
 
-            };
+        };
     }
 
     public ResponseEntity<?> postMyAnswer(Principal principal, Long learningMaterialId, Long questionId, MyAnswerRequest myAnswerRequest) throws Exception {
@@ -219,5 +231,38 @@ public class LearningMaterialService {
         response.put("isCorrect", myAnswerAIResponse.getCorrect());
         response.put("assessment", myAnswerAIResponse.getAssessment());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @Transactional
+    public ResponseEntity<HashMap> setPriority(Principal principal, Long id) {
+        LearningMaterial learningMaterial = learningMaterialRepository.findById(id).orElseThrow();
+        HashMap<String, String> response = new HashMap<>();
+        if(!principal.getName().equals(learningMaterial.getMember().getUsername())){
+            response.put("msg" , "작성자가 아닙니다.");
+            return new ResponseEntity<HashMap>(response, HttpStatus.BAD_REQUEST );
+        }
+        else if(learningMaterial.getIsPriority()){
+            response.put("msg", "이미 중요도 체크를 하였습니다.");
+            return new ResponseEntity<HashMap>(response, HttpStatus.NOT_ACCEPTABLE);
+        }
+        learningMaterial.setIsPriority(true);
+        response.put("msg", "우선순위가 설정되었습니다");
+        return new ResponseEntity<HashMap>(response, HttpStatus.OK);
+    }
+
+    public ResponseEntity<HashMap> unsetPriority(Principal principal, Long id){
+        LearningMaterial learningMaterial = learningMaterialRepository.findById(id).orElseThrow();
+        HashMap<String, String> response = new HashMap<>();
+        if(!principal.getName().equals(learningMaterial.getMember().getUsername())){
+            response.put("msg" , "작성자가 아닙니다.");
+            return new ResponseEntity<HashMap>(response, HttpStatus.BAD_REQUEST );
+        }
+        else if(!learningMaterial.getIsPriority()){
+            response.put("msg", "중요도 체크를 하지 않았습니다.");
+            return new ResponseEntity<HashMap>(response, HttpStatus.NOT_ACCEPTABLE);
+        }
+        learningMaterial.setIsPriority(false);
+        response.put("msg", "우선순위가 해제되었습니다.");
+        return new ResponseEntity<HashMap>(response, HttpStatus.OK);
     }
 }
