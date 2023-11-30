@@ -164,6 +164,7 @@ public class LearningMaterialService {
                 .isFirst(learningMaterials.isFirst())
                 .isLast(learningMaterials.isLast())
                 .numberOfElements(learningMaterials.getNumberOfElements())
+                .priorityLearningMaterialContents(priorityLearningMaterialContents)
                 .pageNumber(learningMaterials.getNumber())
                 .size(learningMaterials.getSize())
                 .totalElements(learningMaterials.getTotalElements())
