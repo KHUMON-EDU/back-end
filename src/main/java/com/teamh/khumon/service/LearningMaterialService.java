@@ -251,6 +251,7 @@ public class LearningMaterialService {
         return new ResponseEntity<HashMap>(response, HttpStatus.OK);
     }
 
+    @Transactional
     public ResponseEntity<HashMap> unsetPriority(Principal principal, Long id){
         LearningMaterial learningMaterial = learningMaterialRepository.findById(id).orElseThrow();
         HashMap<String, String> response = new HashMap<>();
